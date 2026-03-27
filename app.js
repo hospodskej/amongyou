@@ -63,13 +63,12 @@ if (startBtn) {
         const updates = {};
         shuffled.forEach((p, i) => {
             let role = 'CREWMATE';
-            if (i < 2) role = 'IMPOSTOR';
+            if (i === 1) role = 'IMPOSTOR';
             else if (i === 2) role = 'SPY';
             else if (i === 3) role = 'DETECTIVE';
             else if (i === 4) role = 'JESTER';
             else if (i === 5) role = 'POLITICIAN';
-            else if (i === 6) role = 'DEMOCRAT';
-            else if (i === 7) role = 'BLACKMAILER';
+            else if (i === 6) role = 'BLACKMAILER';
             updates[`players/${p.id}/role`] = role;
         });
         updates['gameState'] = 'STARTED';
