@@ -19,7 +19,8 @@ let currentPlayersList = [];
 let cooldownActive = false;
 let countdownInterval = null;
 
-const siren = new Audio('sirena.mp3');
+// Updated filename to sirena.mp3 with a version query to bypass cache
+const siren = new Audio('sirena.mp3?v=1'); 
 siren.loop = true;
 const silentUnlock = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=');
 
@@ -56,6 +57,7 @@ if (emergencyBtn) emergencyBtn.addEventListener('click', () => !cooldownActive &
 if (silenceBtn) silenceBtn.addEventListener('click', () => set(ref(db, 'gameState'), 'MEETING'));
 if (endMeetingBtn) endMeetingBtn.addEventListener('click', () => set(ref(db, 'gameState'), 'STARTED'));
 
+// Your specific role distribution logic
 if (startBtn) {
     startBtn.addEventListener('click', () => {
         if (currentPlayersList.length < 3) return alert("Need 3+ players!");
@@ -124,14 +126,23 @@ onValue(ref(db), (snapshot) => {
             cooldownActive ? (meetingBtn.style.display = 'block', meetingBtn.textContent = "Cooldown active...") : (emergencyBtn.style.display = 'block');
         }
 
-        // --- DECEPTIVE INTEL ONLY ---
+        // --- SPECIAL INTEL LOGIC ---
         intelDisplay.innerHTML = '';
-        if (me?.role === 'IMPOSTOR') {
-            const partner = currentPlayersList.find(p => p.role === 'IMPOSTOR' && p.id !== myId);
-            const spy = currentPlayersList.find(p => p.role === 'SPY');
-            let pot = [partner?.name, spy?.name].filter(Boolean).sort(() => 0.5 - Math.random());
-            if (pot.length > 0) {
-                intelDisplay.innerHTML = `<p style="color:#888; margin-top:20px;">Other impostors:</p><strong>${pot[0]}</strong>${pot[1] ? `<strong>${pot[1]}</strong>` : ''}`;
+        if (me?.role === 'IMPOSTOR' || me?.role === 'BLACKMAILER') {
+            // Find the other evil roles and the spy
+            const filtered = currentPlayersList.filter(p => 
+                (p.role === 'IMPOSTOR' || p.role === 'BLACKMAILER' || p.role === 'SPY') && 
+                p.id !== myId
+            );
+            
+            // Randomize names so the Spy is hidden among them
+            let names = filtered.map(p => p.name).sort(() => 0.5 - Math.random());
+            
+            if (names.length > 0) {
+                intelDisplay.innerHTML = `
+                    <p style="color:#888; margin-top:20px;">Team & Intel:</p>
+                    ${names.map(name => `<strong>${name}</strong>`).join('')}
+                `;
             }
         }
     }
