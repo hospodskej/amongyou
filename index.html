@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Among You</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="join-screen" class="screen">
+        <h1>Among <span class="accent-red">You</span></h1>
+        <input type="text" id="player-name" placeholder="Enter name" maxlength="15">
+        <button id="join-btn">JOIN GAME</button>
+    </div>
+
+    <div id="lobby-screen" class="screen" style="display: none;">
+        <h2>Lobby</h2>
+        <p>Players: <span id="player-count">0</span></p>
+        <ul id="player-list"></ul>
+        <button id="start-game-btn" style="display: none;">START GAME</button>
+        <button id="reset-game-btn" style="display: none; background: #ff3333;">RESET LOBBY</button>
+    </div>
+
+    <div id="game-screen" class="screen" style="display: none;">
+        <div id="timer-container" style="display: none; margin-bottom: 10px;">
+            <p id="timer-label" style="color: #888; margin: 0; font-size: 0.8rem; letter-spacing: 1px;">COOLDOWN</p>
+            <div id="timer-display" style="font-size: 2.5rem; color: #ff3333; font-weight: bold;">40</div>
+        </div>
+
+        <p style="color: #666; margin-bottom: 0;">Your role:</p>
+        <h1 id="role-display">...</h1>
+        <div id="intel-display"></div>
+        
+        <div id="action-container" style="margin-top: 30px;">
+            <h2 id="meeting-status" style="display: none; color: #ff3333; margin-bottom: 20px;"></h2>
+            <button id="emergency-btn" style="background: #ff3333; width: 100%;">EMERGENCY ALARM</button>
+            <button id="silence-alarm-btn" style="display: none; background: #4CAF50; width: 100%;">SILENCE ALARM</button>
+            <button id="end-meeting-btn" style="display: none; background: #2196F3; width: 100%;">END MEETING</button>
+            <button id="meeting-in-progress-btn" disabled style="display: none; background: #333; color: #777; width: 100%;">Meeting in progress...</button>
+        </div>
+        
+        <button id="restart-game-btn" style="display: none; background: #ff3333; margin-top: 50px;">RESTART</button>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
