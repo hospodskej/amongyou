@@ -19,7 +19,7 @@ let currentPlayersList = [];
 let cooldownActive = false;
 let countdownInterval = null;
 
-const siren = new Audio('siren.mp3');
+const siren = new Audio('sirena.mp3');
 siren.loop = true;
 const silentUnlock = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=');
 
