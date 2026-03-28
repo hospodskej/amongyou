@@ -157,7 +157,7 @@ onValue(ref(db), (snapshot) => {
             
             if (names.length > 0) {
                 intelDisplay.innerHTML = `
-                    <p style="color:#888; margin-top:20px;">Team / Intel:</p>
+                    <p style="color:#888; margin-top:20px;">Team:</p>
                     ${names.map(name => `<strong>${name}</strong>`).join('')}
                 `;
             }
