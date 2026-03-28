@@ -83,6 +83,7 @@ if (startBtn) {
             else if (i === 3) role = 'DETECTIVE';
             else if (i === 4) role = 'JESTER';
             else if (i === 5) role = 'POLITICIAN';
+            else if (i === 5) role = 'COMEDIAN';
             
             updates[`players/${p.id}/role`] = role;
         });
