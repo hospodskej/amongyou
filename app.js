@@ -19,8 +19,8 @@ let currentPlayersList = [];
 let cooldownActive = false;
 let countdownInterval = null;
 
-// Updated filename to sirena.mp3 with a version query to bypass cache
-const siren = new Audio('sirena.mp3?v=1'); 
+// Audio with versioning to prevent browser caching issues
+const siren = new Audio('sirena.mp3'); 
 siren.loop = true;
 const silentUnlock = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=');
 
@@ -57,22 +57,37 @@ if (emergencyBtn) emergencyBtn.addEventListener('click', () => !cooldownActive &
 if (silenceBtn) silenceBtn.addEventListener('click', () => set(ref(db, 'gameState'), 'MEETING'));
 if (endMeetingBtn) endMeetingBtn.addEventListener('click', () => set(ref(db, 'gameState'), 'STARTED'));
 
-// Your specific role distribution logic
+// UPDATED: Role distribution with "Coin Flip" logic
 if (startBtn) {
     startBtn.addEventListener('click', () => {
         if (currentPlayersList.length < 3) return alert("Need 3+ players!");
+        
+        // Flip a coin: true = 3 Impostors/No Spy, false = 2 Impostors/1 Spy
+        const threeImpostorsMode = Math.random() < 0.5; 
+        
         const shuffled = [...currentPlayersList].sort(() => 0.5 - Math.random());
         const updates = {};
+        
         shuffled.forEach((p, i) => {
             let role = 'CREWMATE';
-            if (i === 1) role = 'IMPOSTOR';
-            else if (i === 2) role = 'SPY';
+            
+            // First two slots are always Impostors
+            if (i === 0 || i === 1) {
+                role = 'IMPOSTOR';
+            } 
+            // Third slot is the "Coin Flip" slot
+            else if (i === 2) {
+                role = threeImpostorsMode ? 'IMPOSTOR' : 'SPY';
+            }
+            // Other special roles
             else if (i === 3) role = 'DETECTIVE';
             else if (i === 4) role = 'JESTER';
             else if (i === 5) role = 'POLITICIAN';
             else if (i === 6) role = 'BLACKMAILER';
+            
             updates[`players/${p.id}/role`] = role;
         });
+        
         updates['gameState'] = 'STARTED';
         update(ref(db), updates);
     });
@@ -129,18 +144,18 @@ onValue(ref(db), (snapshot) => {
         // --- SPECIAL INTEL LOGIC ---
         intelDisplay.innerHTML = '';
         if (me?.role === 'IMPOSTOR' || me?.role === 'BLACKMAILER') {
-            // Find the other evil roles and the spy
+            // Find teammates and the spy (if any)
             const filtered = currentPlayersList.filter(p => 
                 (p.role === 'IMPOSTOR' || p.role === 'BLACKMAILER' || p.role === 'SPY') && 
                 p.id !== myId
             );
             
-            // Randomize names so the Spy is hidden among them
+            // Randomize names so the Spy is hidden among teammates
             let names = filtered.map(p => p.name).sort(() => 0.5 - Math.random());
             
             if (names.length > 0) {
                 intelDisplay.innerHTML = `
-                    <p style="color:#888; margin-top:20px;">Team & Intel:</p>
+                    <p style="color:#888; margin-top:20px;">Team / Intel:</p>
                     ${names.map(name => `<strong>${name}</strong>`).join('')}
                 `;
             }
