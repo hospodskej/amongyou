@@ -72,10 +72,10 @@ button:active { transform: scale(0.95); opacity: 0.8; }
 #intel-display { margin-top: 30px; }
 #intel-display p { color: #888; margin: 5px 0; }
 
-/* FIXED: Names now appear side-by-side instead of stacking */
+/* FIXED: Names now appear below each other again */
 #intel-display strong { 
     font-size: 1.6rem; 
     color: #fff; 
-    display: inline-block; 
-    margin: 5px 10px; /* Adds space between the names */
+    display: block; 
+    margin: 10px 0; 
 }
