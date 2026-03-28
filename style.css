@@ -30,14 +30,14 @@ input, button {
     outline: none;
 }
 
-/* FIXED: Role display now scales with screen width to fit "BLACKMAILER" */
+/* FIXED: Role display no longer breaks "BLACKMAILER" into two lines */
 #role-display {
-    font-size: clamp(2rem, 10vw, 3.5rem); 
+    font-size: clamp(1.5rem, 9vw, 3rem); /* Slightly smaller to fit mobile screens */
     text-transform: uppercase;
-    letter-spacing: 2px;
+    letter-spacing: 1px; /* Reduced spacing for longer words */
     margin: 10px 0;
     text-shadow: 0 0 10px rgba(255,255,255,0.2);
-    word-wrap: break-word;
+    white-space: nowrap; /* Forces text to stay on a single line */
     line-height: 1.1;
 }
 
@@ -49,7 +49,7 @@ button:active { transform: scale(0.95); opacity: 0.8; }
 #start-game-btn, #reset-game-btn, #restart-game-btn { display: none; }
 #reset-game-btn, #restart-game-btn { background-color: #ff3333; margin-top: 50px; }
 
-/* FIXED: Added scrollbar and height limit for the lobby list */
+/* Lobby scrollbar logic included */
 #player-list { 
     list-style: none; 
     padding: 0; 
@@ -59,14 +59,8 @@ button:active { transform: scale(0.95); opacity: 0.8; }
     border-radius: 8px;
 }
 
-/* Optional: Custom scrollbar styling to keep it sleek */
-#player-list::-webkit-scrollbar {
-    width: 6px;
-}
-#player-list::-webkit-scrollbar-thumb {
-    background: #333;
-    border-radius: 10px;
-}
+#player-list::-webkit-scrollbar { width: 6px; }
+#player-list::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
 
 #player-list li { 
     background: #111; 
@@ -77,4 +71,11 @@ button:active { transform: scale(0.95); opacity: 0.8; }
 
 #intel-display { margin-top: 30px; }
 #intel-display p { color: #888; margin: 5px 0; }
-#intel-display strong { font-size: 1.6rem; color: #fff; display: block; margin-top: 5px; }
+
+/* FIXED: Names now appear side-by-side instead of stacking */
+#intel-display strong { 
+    font-size: 1.6rem; 
+    color: #fff; 
+    display: inline-block; 
+    margin: 5px 10px; /* Adds space between the names */
+}
