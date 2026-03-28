@@ -19,8 +19,7 @@ let currentPlayersList = [];
 let cooldownActive = false;
 let countdownInterval = null;
 
-// Audio with versioning to prevent browser caching issues
-const siren = new Audio('sirena.mp3'); 
+const siren = new Audio('sirena.mp3?v=3'); 
 siren.loop = true;
 const silentUnlock = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=');
 
@@ -57,12 +56,11 @@ if (emergencyBtn) emergencyBtn.addEventListener('click', () => !cooldownActive &
 if (silenceBtn) silenceBtn.addEventListener('click', () => set(ref(db, 'gameState'), 'MEETING'));
 if (endMeetingBtn) endMeetingBtn.addEventListener('click', () => set(ref(db, 'gameState'), 'STARTED'));
 
-// UPDATED: Role distribution with "Coin Flip" logic
 if (startBtn) {
     startBtn.addEventListener('click', () => {
         if (currentPlayersList.length < 3) return alert("Need 3+ players!");
         
-        // Flip a coin: true = 3 Impostors/No Spy, false = 2 Impostors/1 Spy
+        // Coin flip logic
         const threeImpostorsMode = Math.random() < 0.5; 
         
         const shuffled = [...currentPlayersList].sort(() => 0.5 - Math.random());
@@ -71,15 +69,13 @@ if (startBtn) {
         shuffled.forEach((p, i) => {
             let role = 'CREWMATE';
             
-            // First two slots are always Impostors
+            // FIXED INDICES: Starting at 0 to ensure correct counts
             if (i === 0 || i === 1) {
-                role = 'IMPOSTOR';
+                role = 'IMPOSTOR'; // First two are always Impostors
             } 
-            // Third slot is the "Coin Flip" slot
             else if (i === 2) {
-                role = threeImpostorsMode ? 'IMPOSTOR' : 'SPY';
+                role = threeImpostorsMode ? 'IMPOSTOR' : 'SPY'; // Third is Impostor OR Spy
             }
-            // Other special roles
             else if (i === 3) role = 'DETECTIVE';
             else if (i === 4) role = 'JESTER';
             else if (i === 5) role = 'POLITICIAN';
@@ -141,16 +137,13 @@ onValue(ref(db), (snapshot) => {
             cooldownActive ? (meetingBtn.style.display = 'block', meetingBtn.textContent = "Cooldown active...") : (emergencyBtn.style.display = 'block');
         }
 
-        // --- SPECIAL INTEL LOGIC ---
         intelDisplay.innerHTML = '';
         if (me?.role === 'IMPOSTOR' || me?.role === 'BLACKMAILER') {
-            // Find teammates and the spy (if any)
             const filtered = currentPlayersList.filter(p => 
                 (p.role === 'IMPOSTOR' || p.role === 'BLACKMAILER' || p.role === 'SPY') && 
                 p.id !== myId
             );
             
-            // Randomize names so the Spy is hidden among teammates
             let names = filtered.map(p => p.name).sort(() => 0.5 - Math.random());
             
             if (names.length > 0) {
