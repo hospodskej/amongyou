@@ -19,7 +19,8 @@ let currentPlayersList = [];
 let cooldownActive = false;
 let countdownInterval = null;
 
-const siren = new Audio('sirena.mp3?v=3'); 
+// Audio with versioning to prevent browser caching issues
+const siren = new Audio('sirena.mp3?v=5'); 
 siren.loop = true;
 const silentUnlock = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=');
 
@@ -60,7 +61,7 @@ if (startBtn) {
     startBtn.addEventListener('click', () => {
         if (currentPlayersList.length < 3) return alert("Need 3+ players!");
         
-        // Coin flip logic
+        // true = 3 Impostors (Inc. Blackmailer), false = 2 Impostors (Inc. Blackmailer) + 1 Spy
         const threeImpostorsMode = Math.random() < 0.5; 
         
         const shuffled = [...currentPlayersList].sort(() => 0.5 - Math.random());
@@ -69,17 +70,19 @@ if (startBtn) {
         shuffled.forEach((p, i) => {
             let role = 'CREWMATE';
             
-            // FIXED INDICES: Starting at 0 to ensure correct counts
-            if (i === 0 || i === 1) {
-                role = 'IMPOSTOR'; // First two are always Impostors
+            if (i === 0) {
+                role = 'IMPOSTOR';
             } 
+            else if (i === 1) {
+                role = 'BLACKMAILER';
+            }
             else if (i === 2) {
-                role = threeImpostorsMode ? 'IMPOSTOR' : 'SPY'; // Third is Impostor OR Spy
+                // If Spy is in game, there are only 2 Impostors (the ones at index 0 and 1)
+                role = threeImpostorsMode ? 'IMPOSTOR' : 'SPY'; 
             }
             else if (i === 3) role = 'DETECTIVE';
             else if (i === 4) role = 'JESTER';
             else if (i === 5) role = 'POLITICIAN';
-            else if (i === 6) role = 'BLACKMAILER';
             
             updates[`players/${p.id}/role`] = role;
         });
@@ -121,7 +124,12 @@ onValue(ref(db), (snapshot) => {
     } else {
         showScreen('game-screen');
         const me = players[myId];
-        if (roleDisplay) roleDisplay.textContent = me?.role || '...';
+        
+        if (roleDisplay) {
+            roleDisplay.textContent = me?.role || '...';
+            // Keep the text color white for everyone
+            roleDisplay.style.color = '#ffffff';
+        }
         
         [emergencyBtn, silenceBtn, endMeetingBtn, meetingBtn, statusUI].forEach(el => { if (el) el.style.display = 'none'; });
 
